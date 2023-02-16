@@ -76,6 +76,7 @@
 /vis/geometry/set/colour QuartzWindowHolderTop  0 1 1 1 1
 /vis/geometry/set/colour CoatingTPB             0 1 0 0 0.1
 
+/vis/geometry/set/colour World                  0 1 1 1 0.1
 
 ### Drawing the tracks (if chosen in user actions)
 # Parameter (omittable) (default=0):

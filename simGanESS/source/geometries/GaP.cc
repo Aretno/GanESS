@@ -139,12 +139,12 @@ void GaP::Construct()
     G4Box *solid_world     = new G4Box("solidWorld", 
                                       world_size_x, world_size_y, world_size_z);
   
-    G4LogicalVolume   *logic_world = new G4LogicalVolume(solid_world, air, "logicWorld");
+    G4LogicalVolume   *logic_world = new G4LogicalVolume(solid_world, air, "World");
     G4VPhysicalVolume *phys_world  = new G4PVPlacement(0, G4ThreeVector(0., 0., 0.), 
-                                                      logic_world, "physWorld",
+                                                      logic_world, "World",
                                                       0, 
                                                       false, 0, true);
-
+    this->SetLogicalVolume(logic_world);
 
 
     //Cylinder, acting as the vessel
