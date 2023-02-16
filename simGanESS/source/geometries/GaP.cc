@@ -130,14 +130,40 @@ void GaP::Construct()
 
     vacuum_ = G4NistManager::Instance()->FindOrBuildMaterial("G4_Galactic");
 
+    G4double world_size_x = 1*m/2;
+    G4double world_size_y = 1*m/2;
+    G4double world_size_z = 1*m/2;
+
+   
+    G4Material* air = G4NistManager::Instance()->FindOrBuildMaterial("G4_Air");
+    G4Box *solid_world     = new G4Box("solidWorld", 
+                                      world_size_x, world_size_y, world_size_z);
+  
+    G4LogicalVolume   *logic_world = new G4LogicalVolume(solid_world, air, "logicWorld");
+    G4VPhysicalVolume *phys_world  = new G4PVPlacement(0, G4ThreeVector(0., 0., 0.), 
+                                                      logic_world, "physWorld",
+                                                      0, 
+                                                      false, 0, true);
+
+
 
     //Cylinder, acting as the vessel
     G4Tubs          *solid_vessel_steel = new G4Tubs("Vessel", 0, vessel_out_rad_, vessel_out_length_/2 , 0., 360.*deg);
     G4LogicalVolume *logic_vessel_steel = new G4LogicalVolume(solid_vessel_steel, steel_, "Vessel");
-    this->SetLogicalVolume(logic_vessel_steel);
+    new G4PVPlacement(0, G4ThreeVector(0., 0., 0.), logic_vessel_steel, "LeadShield", logic_world, false, 0, true);
+    //this->SetLogicalVolume(logic_vessel_steel);
 
     //Build inside detector
     BuildTPC(gas_, mesh_mat_, steel_, peek_, vacuum_, quartz_, tpb_, logic_vessel_steel);
+
+    // Lead shielding
+    G4Material* lead = G4NistManager::Instance()->FindOrBuildMaterial("G4_Pb");
+    G4Box           *solid_lead_shield = new G4Box("LeadShield", lead_size_x_/2, lead_size_y_/2 , lead_size_z_/2);
+    G4LogicalVolume *logic_lead_shield = new G4LogicalVolume(solid_lead_shield, lead, "LeadShield");
+    G4double lead_pos_x = specific_vertex_[0] - lead_size_x_/2;
+    G4double lead_pos_y = specific_vertex_[1] - lead_size_y_/2;
+    G4double lead_pos_z = specific_vertex_[2] - lead_size_z_/2;
+    new G4PVPlacement(0, G4ThreeVector(lead_pos_x, lead_pos_y, lead_pos_z), logic_lead_shield, "LeadShield", logic_world, false, 0, true);
 }
 
 G4ThreeVector GaP::GenerateVertex(const G4String& region) const
@@ -273,6 +299,11 @@ void GaP::DefineConfigurationParameters()
 
   // Specific vertex in case region to shoot from is AD_HOC
   msg_->DeclarePropertyWithUnit("specific_vertex", "mm",  specific_vertex_, "Set generation vertex.");
+  
+  // Lead shield thickness
+  msg_->DeclarePropertyWithUnit("lead_size_x", "cm",  lead_size_x_, "Lead shield thickness (x-dim)");
+  msg_->DeclarePropertyWithUnit("lead_size_y", "cm",  lead_size_y_, "Lead shield thickness (y-dim)");
+  msg_->DeclarePropertyWithUnit("lead_size_z", "cm",  lead_size_z_, "Lead shield thickness (z-dim)");
 }
 
 void GaP::BuildTPC(G4Material* gas, G4Material* mesh_mat, G4Material* steel, G4Material* peek, G4Material* vacuum, G4Material* quartz, G4Material* tpb, G4LogicalVolume* logic_vessel_steel)
@@ -592,5 +623,4 @@ void GaP::BuildTPC(G4Material* gas, G4Material* mesh_mat, G4Material* steel, G4M
 
     G4double plateUp_pmt_z = vessel_length_/2 - plateUp_pmt_length_/2 ;
     new G4PVPlacement(0, G4ThreeVector(0., 0., -plateUp_pmt_z), logic_plateUp_pmt, "PMTplateUp", logic_vessel, false, 0, true);
-
 }

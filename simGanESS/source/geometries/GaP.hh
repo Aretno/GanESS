@@ -102,9 +102,13 @@ class GaP : public GeometryBase
         // Vertex generation
         G4ThreeVector specific_vertex_;
 
+        // Lead shielding
+        G4double lead_size_x_;
+        G4double lead_size_y_;
+        G4double lead_size_z_;
+
         CylinderPointSampler2020* drift_gen_;
         CylinderPointSampler2020* el_gen_;
-
 
 };
 
