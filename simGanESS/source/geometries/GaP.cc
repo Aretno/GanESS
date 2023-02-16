@@ -135,7 +135,7 @@ void GaP::Construct()
     G4double world_size_z = 1*m/2;
 
    
-    G4Material* air = G4NistManager::Instance()->FindOrBuildMaterial("G4_Air");
+    G4Material* air = G4NistManager::Instance()->FindOrBuildMaterial("G4_AIR");
     G4Box *solid_world     = new G4Box("solidWorld", 
                                       world_size_x, world_size_y, world_size_z);
   
@@ -150,7 +150,7 @@ void GaP::Construct()
     //Cylinder, acting as the vessel
     G4Tubs          *solid_vessel_steel = new G4Tubs("Vessel", 0, vessel_out_rad_, vessel_out_length_/2 , 0., 360.*deg);
     G4LogicalVolume *logic_vessel_steel = new G4LogicalVolume(solid_vessel_steel, steel_, "Vessel");
-    new G4PVPlacement(0, G4ThreeVector(0., 0., 0.), logic_vessel_steel, "LeadShield", logic_world, false, 0, true);
+    new G4PVPlacement(0, G4ThreeVector(0., 0., 0.), logic_vessel_steel, "Vessel", logic_world, false, 0, true);
     //this->SetLogicalVolume(logic_vessel_steel);
 
     //Build inside detector
@@ -160,9 +160,9 @@ void GaP::Construct()
     G4Material* lead = G4NistManager::Instance()->FindOrBuildMaterial("G4_Pb");
     G4Box           *solid_lead_shield = new G4Box("LeadShield", lead_size_x_/2, lead_size_y_/2 , lead_size_z_/2);
     G4LogicalVolume *logic_lead_shield = new G4LogicalVolume(solid_lead_shield, lead, "LeadShield");
-    G4double lead_pos_x = specific_vertex_[0] - lead_size_x_/2;
+    G4double lead_pos_x = specific_vertex_[0];// - lead_size_x_/2;
     G4double lead_pos_y = specific_vertex_[1] - lead_size_y_/2;
-    G4double lead_pos_z = specific_vertex_[2] - lead_size_z_/2;
+    G4double lead_pos_z = specific_vertex_[2];// - lead_size_z_/2;
     new G4PVPlacement(0, G4ThreeVector(lead_pos_x, lead_pos_y, lead_pos_z), logic_lead_shield, "LeadShield", logic_world, false, 0, true);
 }
 
