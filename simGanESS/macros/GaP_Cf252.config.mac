@@ -4,11 +4,12 @@
 /Generator/IonGenerator/region  AD_HOC
 /Generator/IonGenerator/atomic_number 98
 /Generator/IonGenerator/mass_number 252
-/Geometry/GaP/specific_vertex  0. 40.9  -0.537 cm
+/Geometry/GaP/specific_vertex  0. 0.  18. cm # To be modififed with shielding
 
 /Geometry/GaP/lead_size_x 10 cm
-/Geometry/GaP/lead_size_y 15 cm 
-/Geometry/GaP/lead_size_z 10 cm
+/Geometry/GaP/lead_size_y 10 cm # To be modififed with shielding
+/Geometry/GaP/lead_size_z 0.00001 cm
+#/Geometry/GaP/lead_size_z 5 cm
 
 
 ### PHYSICS
@@ -29,4 +30,4 @@
 ### CONTROL
 /nexus/random_seed            -1
 /nexus/persistency/start_id   0
-/nexus/persistency/outputFile GaP_1_1e6_Cf252_15cm.h5
+/nexus/persistency/outputFile GaP_1_1e5_Cf252_9drift_10cmdist_NoShielding_on_axis_5.h5

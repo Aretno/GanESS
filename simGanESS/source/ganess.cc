@@ -6,6 +6,8 @@
 
 #include <getopt.h>
 
+#include "NeutronHPphysics.hh"
+
 using namespace nexus;
 
 void PrintUsage()
@@ -93,6 +95,7 @@ G4int main(int argc, char** argv)
 
   NexusApp* app = new NexusApp(macro_filename);
   app->Initialize();
+  //RegisterPhysics( new NeutronHPphysics("neutronHP"));  
 
   G4UImanager* UI = G4UImanager::GetUIpointer();
 

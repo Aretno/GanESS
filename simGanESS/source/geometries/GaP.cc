@@ -108,6 +108,8 @@ void GaP::Construct()
                                                       temperature_,
                                                       sc_yield_,
                                                       elifetime_));
+
+    //gas_ = G4NistManager::Instance()->FindOrBuildMaterial("G4_CESIUM_IODIDE");
     // Mesh materials (cathode, anode and gate)
     mesh_mat_ = materials::FakeDielectric(gas_, "mesh_mat");
     mesh_mat_->SetMaterialPropertiesTable(opticalprops::FakeGrid(pressure_,
@@ -160,9 +162,14 @@ void GaP::Construct()
     G4Material* lead = G4NistManager::Instance()->FindOrBuildMaterial("G4_Pb");
     G4Box           *solid_lead_shield = new G4Box("LeadShield", lead_size_x_/2, lead_size_y_/2 , lead_size_z_/2);
     G4LogicalVolume *logic_lead_shield = new G4LogicalVolume(solid_lead_shield, lead, "LeadShield");
+    // Lateral
+    //G4double lead_pos_x = specific_vertex_[0];// - lead_size_x_/2;
+    //G4double lead_pos_y = specific_vertex_[1] - lead_size_y_/2;
+    //G4double lead_pos_z = specific_vertex_[2];// - lead_size_z_/2;
+    // Bottom
     G4double lead_pos_x = specific_vertex_[0];// - lead_size_x_/2;
-    G4double lead_pos_y = specific_vertex_[1] - lead_size_y_/2;
-    G4double lead_pos_z = specific_vertex_[2];// - lead_size_z_/2;
+    G4double lead_pos_y = specific_vertex_[1];// - lead_size_y_/2;
+    G4double lead_pos_z = specific_vertex_[2] - lead_size_z_/2;// - lead_size_z_/2;
     new G4PVPlacement(0, G4ThreeVector(lead_pos_x, lead_pos_y, lead_pos_z), logic_lead_shield, "LeadShield", logic_world, false, 0, true);
 }
 
@@ -309,7 +316,8 @@ void GaP::DefineConfigurationParameters()
 void GaP::BuildTPC(G4Material* gas, G4Material* mesh_mat, G4Material* steel, G4Material* peek, G4Material* vacuum, G4Material* quartz, G4Material* tpb, G4LogicalVolume* logic_vessel_steel)
 {
     //Gas
-    G4double drift_length_  = 19.825*mm - mesh_thickn_ ;
+    G4double extend_drift   = 7.*cm;
+    G4double drift_length_  = 19.825*mm - mesh_thickn_ + extend_drift;
     G4double el_length_     = 10.775*mm + mesh_thickn_;
 
     G4Tubs          *solid_vessel = new G4Tubs("GasVessel", 0, vessel_rad_, vessel_length_/2 , 0., 360.*deg);
@@ -319,13 +327,13 @@ void GaP::BuildTPC(G4Material* gas, G4Material* mesh_mat, G4Material* steel, G4M
     //// Cathode
     G4Tubs          *solid_cathode = new G4Tubs("Cathode", 0., mesh_rad_, (mesh_thickn_)/2, 0., 360.*deg);
     G4LogicalVolume *logic_cathode = new G4LogicalVolume(solid_cathode, mesh_mat, "Cathode");
-    G4double cathode_z = 4.505*mm + mesh_thickn_/2;  //cathode center from vessel center
+    G4double cathode_z = 4.505*mm + mesh_thickn_/2 + extend_drift;  //cathode center from vessel center
     new G4PVPlacement(0, G4ThreeVector(0., 0., cathode_z), logic_cathode, "Cathode", logic_vessel, false, 0, true);
 
     // Cathode Bracket
     G4Tubs          *solid_cathBracket = new G4Tubs("CathodeBracket", mesh_rad_, meshBracket_rad_, (meshBracket_thickn_)/2, 0., 360.*deg);
     G4LogicalVolume *logic_cathBracket = new G4LogicalVolume(solid_cathBracket, steel, "CathodeBracket");
-    G4double cathBracket_z = 8.005*mm - meshBracket_thickn_/2;
+    G4double cathBracket_z = 8.005*mm - meshBracket_thickn_/2 + extend_drift;
     new G4PVPlacement(0, G4ThreeVector(0., 0., cathBracket_z), logic_cathBracket, "CathodeBracket", logic_vessel, false, 0, true);
 
     //// Drift
